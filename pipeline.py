@@ -119,15 +119,21 @@ def run_display_interface():
 if __name__ == "__main__":
     # Import our newly upgraded real local LLM class
     from refiner import RealLocalLLM
+    import os
+    # 1. Safely resolve the absolute path to your model file
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    MODEL_PATH = os.path.join(BASE_DIR,"models", 
+                            #   "qwen2.5-1.5b-instruct-q5_k_m.gguf")
+                            "Llama-3.2-3B-Instruct-Q4_K_M.gguf")
     
     # Initialize the real local LLM engine
-    local_llm_engine = RealLocalLLM(model_path="qwen2.5-1.5b-instruct-q4_k_m.gguf")
+    local_llm_engine = RealLocalLLM(model_path=MODEL_PATH)
     
     ui_thread = threading.Thread(target=run_display_interface, daemon=True)
     ui_thread.start()
     
-    print("\nProcessing real audio file 'test_speech.wav' via Moonshine Tiny...")
-    fast_path_asr("test_speech.wav", local_llm_engine)
+    print("\nProcessing real audio file 'woodchuck.wav' via Moonshine Tiny...")
+    fast_path_asr("./audio/woodchuck.wav", local_llm_engine)
     
     # Give the background LLM thread enough time to complete if it triggers
     time.sleep(10.0)
