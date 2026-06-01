@@ -1,3 +1,4 @@
+from refiner import RealLocalLLM
 import threading
 import queue
 import time
@@ -5,7 +6,9 @@ import sys
 import numpy as np
 import pyaudio
 import moonshine_onnx as moonshine
-from refiner import RealLocalLLM
+# import moonshine_voice as moonshine
+import os
+
 
 # Thread-safe communication channels
 audio_chunk_queue = queue.Queue()
@@ -17,10 +20,23 @@ CHANNELS = 1
 RATE = 16000
 CHUNK_SIZE = 512  # Stream chunk slice sizing (~32ms frames)
 
+# 1. Safely resolve the absolute path to your model file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR,"models", 
+                        #   "qwen2.5-1.5b-instruct-q5_k_m.gguf")
+                        "Llama-3.2-3B-Instruct-Q4_K_M.gguf")
+print(MODEL_PATH)
+
+# Double check the file exists before initializing to prevent C-level crashes
+if not os.path.exists(MODEL_PATH):
+    raise FileNotFoundError(f"Missing model file! Please place it here: {MODEL_PATH}")
+
 # Global Initialization
 print("[System Initialization] Booting Pipeline Architecture...")
 print("[System Initialization] Loading real local 4-bit LLM (Qwen 2.5) into memory...")
-local_llm_engine = RealLocalLLM(model_path="qwen2.5-1.5b-instruct-q4_k_m.gguf")
+local_llm_engine = RealLocalLLM(model_path=
+                                MODEL_PATH)
+                                # "models/Llama-3.2-3B-Instruct-Q4_0_4_4.gguf")
 print("[System Initialization] Local engines compiled. Pipeline active.")
 
 # ========================================================
