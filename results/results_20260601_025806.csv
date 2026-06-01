@@ -1,0 +1,9 @@
+segment,raw_text,refined_text,asr_latency_s,llm_latency_s,asr_energy_j,llm_energy_j
+1,How much wood could chuck wood's wood chuck chuck if chuck wood's wood chuck could wood chuck wood?,How much wood could a woodchuck chuck if a woodchuck could chuck wood?,0.0,2.7625,0.0,41.437047
+2,"The chapel is a word for it, word for it.",The chapel is a word for it.,0.0,0.8119,0.0,12.177942
+3,How much will the truth show?,How much will the truth show?,0.0,0.7141,0.0,10.711679
+4,"Chuck, which is woodchuck, woodchuck, he would,","Chuck, which is woodchuck, he would,",0.0,0.9096,0.0,13.644051
+5,"As much as he could, and so, and much would, as any would check, if I would check, I would check.","As much as he could, and so, much would any check, if I would check, I would check.",0.0,1.6888,0.0,25.332491
+6,"How much would the chapters with chapter, if chapters with chapter, with chapter,","How much would the chapters with chapter, if chapters have chapter, with chapter,",0.0,1.1979,0.0,17.968035
+7,"If you're able to do what you're doing, you're going to check your way. If you're able to do what you're doing, you're going to check your way. If you're able to do what you're doing, you're going to check your way.","If you're able to do what you're doing, you're going to check your way. If you're able to do what you're doing, you're going to check your way. If you're able to do what you're doing, you're going to check your way.",0.0,3.9919,0.0,59.877871
+8,"So what's up, what's up, what's up?","What's up, what's up, what's up?",0.0,0.9206,0.0,13.809515

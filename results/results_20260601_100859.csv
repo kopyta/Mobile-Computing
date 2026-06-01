@@ -1,0 +1,5 @@
+segment,raw_text,refined_text,asr_latency_s,llm_latency_s,asr_energy_j,llm_energy_j
+1,"Think technology is amazing. Um, I think the benefits bring so much to people and connecting folks.",Think technology is amazing. I think the benefits bring so much to people and connecting them.,0.0,4.5236,0.0,67.853811
+2,"Information,","Information,",0.0,0.4002,0.0,6.002862
+3,"A lot of things really, the risks are, I think, right now,","A lot of things really, the risks are, I think, now,",0.0,1.6646,0.0,24.969201
+4,"Ah, fake news and media and fake images from artificial intelligence.","Ah, fake news and media and fake images from artificial intelligence.",0.0,1.5191,0.0,22.786045
