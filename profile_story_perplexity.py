@@ -11,7 +11,7 @@ from pydub import AudioSegment
 from pydub.silence import split_on_silence
 
 print("[Setup] Loading Qwen2.5 4-bit LLM for semantic refinement...")
-llm_engine = RealLocalLLM(model_path="qwen2.5-1.5b-instruct-q4_k_m.gguf")
+llm_engine = RealLocalLLM(model_path="./models/qwen2.5-1.5b-instruct-q5_k_m.gguf")
 
 print("[Setup] Initializing Stable Edge Perplexity Gate (Public Tiny-GPT2 Engine)...")
 MODEL_ID = "sshleifer/tiny-gpt2"
@@ -43,8 +43,8 @@ def evaluate_perplexity_gate(raw_text):
 # AUTOMATED NARRATIVE EVALUATION EXPERIMENT
 # ========================================================
 def evaluate_story_pipeline(audio_path):
-    csv_file = "perplexity_gate_results.csv"
-    fields = ["Sentence_Index", "ASR_Text", "Perplexity_Score", "LLM_Triggered", "Gated_Compute_Time_s", "AlwaysOn_Compute_Time_s", "Compute_Saved_s"]
+    csv_file = "perplexity_gate_results_compare.csv"
+    fields = ["Sentence_Index", "ASR_Text", "Refined_Text", "Perplexity_Score", ...]
     
     if not os.path.exists(audio_path):
         print(f"[Error] Audio asset missing at target path: {audio_path}")
@@ -70,7 +70,7 @@ def evaluate_story_pipeline(audio_path):
     total_asr_time = 0.0          # Tracks pure Moonshine execution time
     total_pipeline_time = 0.0     # Tracks actual total time under our Gated system
     
-    with open(csv_file, mode='w', newline='') as f:
+    with open(csv_file, mode='w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(fields)
         
@@ -92,6 +92,10 @@ def evaluate_story_pipeline(audio_path):
                 
             # Accumulate standalone ASR processing time
             total_asr_time += t_asr
+
+            # --- NEW INTERMEDIATE PRINT ---
+            print(f"\nSegment #{idx:02d}")
+            print(f"  [Immediate Transcript]: \"{asr_text}\"")
             
             # 2. EXECUTE THE OPEN-DOMAIN LINGUISTIC GATE
             t_gate_start = time.time()
@@ -113,7 +117,8 @@ def evaluate_story_pipeline(audio_path):
                 
             # 3. PROFILE ALWAYS-ON LLM BASELINE (For computing savings delta)
             t_always_start = time.time()
-            _ = llm_engine.generate(f"Fix ASR: {asr_text}")
+            refined_text = llm_engine.generate(f"Fix ASR errors and return clean text: {asr_text}")
+            refined_text = refined_text.strip() if refined_text else asr_text
             always_on_compute = t_asr + (time.time() - t_always_start)
             
             # Compute Absolute Saved Time
@@ -121,12 +126,15 @@ def evaluate_story_pipeline(audio_path):
             total_saved_cpu_time += compute_saved
             
             # Log metrics to CSV
-            writer.writerow([idx, asr_text, f"{ppl_score:.2f}", int(should_refine), f"{gated_compute:.3f}", f"{always_on_compute:.3f}", f"{compute_saved:.3f}"])
+            writer.writerow([idx, asr_text, refined_text, f"{ppl_score:.2f}", ...])
             
             # SHOW TRANSCRIPT LIVE IN TERMINAL WITH RAW ASR TIME INCLUDED
-            print(f"Segment #{idx:02d}")
-            print(f"  [Transcript]: \"{asr_text}\"")
-            print(f"  [Metrics]    : ASR Time: {t_asr:.3f}s | PPL: {ppl_score:.1f} | Triggered LLM: {bool(should_refine)}")
+
+            if should_refine:
+                print(f"  [Refined Transcript] : \"{refined_text}\"")
+            else:
+                print(f"  [Refined Transcript] : (Skipped - Text accepted as clean)")
+            print(f"  [Metrics Summary]    : ASR Time: {t_asr:.3f}s | Gate PPL: {ppl_score:.1f} | Gated Triggered: {should_refine} | Time Saved: {compute_saved:.3f}s")
             print("-" * 80)
 
     # Calculate what the total time would look like if the LLM was always on
@@ -145,4 +153,11 @@ def evaluate_story_pipeline(audio_path):
     print(f"=======================================================")
 
 if __name__ == "__main__":
-    evaluate_story_pipeline("dataset/The_Bird_and_the_Whale.wav")
+    evaluate_story_pipeline("audio/woodchuck.wav")
+
+    if 'llm_engine' in locals() or 'llm_engine' in globals():
+        try:
+            if hasattr(llm_engine, 'llm'):
+                del llm_engine.llm
+        except Exception:
+            pass
