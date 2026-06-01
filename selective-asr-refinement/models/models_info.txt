@@ -1,4 +1,4 @@
-This is the place for .gguf files of the models.
+This is the folder for .gguf files of the models.
 Used models: 
 Llama-3.2-3B-Instruct-Q4_K_M
 Qwen2.5-3B-Instruct-Q4_K_M
